@@ -12,19 +12,15 @@ area.info()
 class Pipeline(self):
     
 
-    def __init__(self, *args, **kwargs):
+    def __init__(self):
         self.fl= True
         self.load_file=None
         self.workfile=None
-        self.file_list = ['area',]
-#attr=('../data/Plan_Attributes_PUF.csv',low_memory=False, encoding ='latin1')
-#rate=('../data/Rate_PUF.csv',low_memory=False, encoding ='latin1')
-area=('../data/raw_files/Service_Area_PUF.csv',low_memory=False, encoding ='latin1') }
-        super().__init__(*args, **kwargs)
-        }
+        self.file_list = None # make_files() will be updated with a list
 
      def make_files(self):
          clean_area()
+         clean_attributes()
 
 
 
@@ -67,6 +63,7 @@ area=('../data/raw_files/Service_Area_PUF.csv',low_memory=False, encoding ='lati
 
         #dropna has to be done after levelling or plans are lost
         self.workfile=self.workfile.dropna()
+        #Some states reset 'IssuerId' after the droppna. Code below is work around
         #self.workfile['IssuerId']=self.workfile['IssuerId'].astype(int)
         self.workfile['County']=self.workfile['County'].astype(int)
         self.workfile.drop(['StateCode','ServiceAreaName','CoverEntireState'],axis=1,inplace=True)
@@ -104,4 +101,122 @@ area=('../data/raw_files/Service_Area_PUF.csv',low_memory=False, encoding ='lati
         for county in county_list:
             state_plans.append(county)
             self.workfile = self.workfile.append(pd.Series(state_plans, index=self.workfile.columns ), ignore_index=True)
+    
+    def attribute_exclusions():
+
+    def clean_attributes(self):
+        self.workfile=pd.read_csv('../data/raw_files/Plan_Attributes_PUF.csv',low_memory=False, encoding ='latin1')
+        clean_all()
+         
+         if self.fl != True:
+            #Florida does not have any attribute exclusions. Most states do.
+            attribute_exclusions()
+
+        # no value for recommender at this time
+        attr=attr.drop(['BusinessYear','SourceName', 'ImportDate',
+                'PlanExpirationDate','PlanEffectiveDate',
+                'URLForEnrollmentPayment', 'FormularyURL','IsGuaranteedRate'], axis=1)
+        #These are either 0, N/A, or No for all values in FL
+        attr=attr.drop(['IndianPlanVariationEstimatedAdvancedPaymentAmountPerEnrollee',
+                'ChildOnlyPlanId','HSAOrHRAEmployerContribution', 
+                'HSAOrHRAEmployerContributionAmount','PlanLevelExclusions'], axis = 1)
+        #These are alterations to default rates.  rate file cannot be used at this time.
+
+        attr=attr.drop(['MEHBInnTier1IndividualMOOP','MEHBInnTier1FamilyPerPersonMOOP',
+                'MEHBInnTier1FamilyPerGroupMOOP','MEHBInnTier2IndividualMOOP',
+                'MEHBInnTier2FamilyPerPersonMOOP','MEHBInnTier2FamilyPerGroupMOOP',
+                'MEHBOutOfNetIndividualMOOP','MEHBOutOfNetFamilyPerPersonMOOP',
+                'MEHBOutOfNetFamilyPerGroupMOOP','MEHBCombInnOonIndividualMOOP',
+                'MEHBCombInnOonFamilyPerPersonMOOP','MEHBCombInnOonFamilyPerGroupMOOP',
+                'DEHBInnTier1IndividualMOOP','DEHBInnTier1FamilyPerPersonMOOP',
+                'DEHBInnTier1FamilyPerGroupMOOP','DEHBInnTier2IndividualMOOP',
+                'DEHBInnTier2FamilyPerPersonMOOP','DEHBInnTier2FamilyPerGroupMOOP',
+                'DEHBOutOfNetIndividualMOOP','DEHBOutOfNetFamilyPerPersonMOOP',
+                'DEHBOutOfNetFamilyPerGroupMOOP','DEHBCombInnOonIndividualMOOP',
+                'DEHBCombInnOonFamilyPerPersonMOOP','DEHBCombInnOonFamilyPerGroupMOOP',
+                'TEHBInnTier1IndividualMOOP','TEHBInnTier1FamilyPerPersonMOOP',
+                'TEHBInnTier1FamilyPerGroupMOOP','TEHBInnTier2IndividualMOOP',
+                'TEHBInnTier2FamilyPerPersonMOOP','TEHBInnTier2FamilyPerGroupMOOP',
+                'TEHBOutOfNetIndividualMOOP','TEHBOutOfNetFamilyPerPersonMOOP',
+                'TEHBOutOfNetFamilyPerGroupMOOP','TEHBCombInnOonIndividualMOOP',
+                'TEHBCombInnOonFamilyPerPersonMOOP','TEHBCombInnOonFamilyPerGroupMOOP',
+                'MEHBDedInnTier1Individual','MEHBDedInnTier1FamilyPerPerson',
+                'MEHBDedInnTier1FamilyPerGroup','MEHBDedInnTier1Coinsurance',
+                'MEHBDedInnTier2Individual','MEHBDedInnTier2FamilyPerPerson',
+                'MEHBDedInnTier2FamilyPerGroup','MEHBDedInnTier2Coinsurance',
+                'MEHBDedOutOfNetIndividual','MEHBDedOutOfNetFamilyPerPerson',
+                'MEHBDedOutOfNetFamilyPerGroup','MEHBDedCombInnOonIndividual',
+                'MEHBDedCombInnOonFamilyPerPerson','MEHBDedCombInnOonFamilyPerGroup',
+                'DEHBDedInnTier1Individual','DEHBDedInnTier1FamilyPerPerson',
+                'DEHBDedInnTier1FamilyPerGroup','DEHBDedInnTier1Coinsurance',
+                'DEHBDedInnTier2Individual','DEHBDedInnTier2FamilyPerPerson',
+                'DEHBDedInnTier2FamilyPerGroup','DEHBDedInnTier2Coinsurance',
+                'DEHBDedOutOfNetIndividual','DEHBDedOutOfNetFamilyPerPerson',
+                'DEHBDedOutOfNetFamilyPerGroup','DEHBDedCombInnOonIndividual',
+                'DEHBDedCombInnOonFamilyPerPerson','DEHBDedCombInnOonFamilyPerGroup',
+                'TEHBDedInnTier1Individual','TEHBDedInnTier1FamilyPerPerson',
+                'TEHBDedInnTier1FamilyPerGroup','TEHBDedInnTier1Coinsurance',
+                'TEHBDedInnTier2Individual','TEHBDedInnTier2FamilyPerPerson',
+                'TEHBDedInnTier2FamilyPerGroup','TEHBDedInnTier2Coinsurance',
+                'TEHBDedOutOfNetIndividual','TEHBDedOutOfNetFamilyPerPerson',
+                'TEHBDedOutOfNetFamilyPerGroup','TEHBDedCombInnOonIndividual',
+                'TEHBDedCombInnOonFamilyPerPerson','TEHBDedCombInnOonFamilyPerGroup'], axis =1)
+
+        #Per data dictionary, these are actuarial columns.
+        attr.drop(['MarketCoverage', 'TIN','HIOSProductId', 'HPID', 'FormularyId', 'IsNewPlan',
+            'DesignType', 'UniquePlanDesign', 'QHPNonQHPTypeId',
+            'CompositeRatingOffered', 'EHBPercentTotalPremium',
+            'EHBPediatricDentalApportionmentQuantity', 'OutOfCountryCoverage',
+            'OutOfCountryCoverageDescription', 'OutOfServiceAreaCoverage',
+            'OutOfServiceAreaCoverageDescription',
+            'CSRVariationType', 'IssuerActuarialValue',
+            'AVCalculatorOutputNumber', 'MedicalDrugDeductiblesIntegrated',
+            'MedicalDrugMaximumOutofPocketIntegrated', 'MultipleInNetworkTiers',
+            'FirstTierUtilization', 'SecondTierUtilization',
+            'SpecialtyDrugMaximumCoinsurance', 'InpatientCopaymentMaximumDays',
+            'BeginPrimaryCareCostSharingAfterNumberOfVisits',
+            'BeginPrimaryCareDeductibleCoinsuranceAfterNumberOfCopays',
+            'IsHSAEligible', ],axis=1,inplace=True)
+
+        '''
+        The next block is for pulling information to be used elsewhere.
+        self.fronters can be combined with the other lists and then merged into
+        another df.
+        self.special is specialist prior approval.
+        self.ld_diab_fx_mon is financial costs of of giving birth
+        self.plan_docs is web links
+        '''
+        
+        self.fronters=attr[['IssuerId', 'StandardComponentId', 'PlanMarketingName', 'NetworkId',
+       'ServiceAreaId','PlanId']]
+
+        self.special=attr[['IsNoticeRequiredForPregnancy','IsReferralRequiredForSpecialist','SpecialistRequiringReferral']]
+        attr.drop(['IsNoticeRequiredForPregnancy','IsReferralRequiredForSpecialist','SpecialistRequiringReferral'], axis=1, inplace=True)
+
+        self.ld_diab_fx_mon=attr[['SBCHavingaBabyDeductible',
+            'SBCHavingaBabyCopayment', 'SBCHavingaBabyCoinsurance',
+            'SBCHavingaBabyLimit', 'SBCHavingDiabetesDeductible',
+            'SBCHavingDiabetesCopayment', 'SBCHavingDiabetesCoinsurance',
+            'SBCHavingDiabetesLimit', 'SBCHavingSimplefractureDeductible',
+            'SBCHavingSimplefractureCopayment',
+            'SBCHavingSimplefractureCoinsurance', 'SBCHavingSimplefractureLimit']]
+        attr.drop(['SBCHavingaBabyDeductible',
+            'SBCHavingaBabyCopayment', 'SBCHavingaBabyCoinsurance',
+            'SBCHavingaBabyLimit', 'SBCHavingDiabetesDeductible',
+            'SBCHavingDiabetesCopayment', 'SBCHavingDiabetesCoinsurance',
+            'SBCHavingDiabetesLimit', 'SBCHavingSimplefractureDeductible',
+            'SBCHavingSimplefractureCopayment',
+            'SBCHavingSimplefractureCoinsurance', 'SBCHavingSimplefractureLimit'],axis=1,inplace=True)
+
+        self.plan_docs=[['URLForSummaryofBenefitsCoverage','PlanBrochure']]
+        attr.drop(['URLForSummaryofBenefitsCoverage','PlanBrochure'],axis=1,inplace=True)
+        '''
+        Issuers only have to report if they have a disease management support progam 
+        and then in another column list what they are. The blanks are given a 'No' which is 
+        later used for 'No management program in hotcoding
+        '''
+        attr.fillna('No', inplace=True)
+        # duplicate name issue fix
+        attr.replace(['Weight Loss Management Program','High Blood Pressure & High Cholesterol Management Program',],
+        [' Weight Loss Programs',' Blood Pressure-Cholesterol Management Program'],inplace=True)
 
