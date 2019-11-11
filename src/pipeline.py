@@ -18,17 +18,10 @@ class Pipeline(self):
         self.workfile=None
         self.file_list = None # make_files() will be updated with a list
 
-     def make_files(self):
-         clean_area()
-         clean_attributes()
+    
 
 
 
-    def load(self):
-        self.area=pd.read_csv('../data/raw_files/Service_Area_PUF.csv',low_memory=False, encoding ='latin1')
-        self.ben_cost = pd.read_csv('../data/Benefits_Cost_Sharing_PUF.csv',low_memory=False, encoding ='latin1')
-        
-        pass
 
     def clean_all(self):
         #sets all files to Florida only
@@ -42,7 +35,9 @@ class Pipeline(self):
         self/workfile=self.workfile.drop(['BusinessYear','SourceName', 'ImportDate'], axis = 1)
         self.workfile['IssuerId']=self.workfile['IssuerId'].astype(int)
     
-    
+    def  make_dummies(self):
+        # I have lost my script for this. Need to replace.
+        pass
 
     def clean_area(self):
         '''
@@ -103,26 +98,28 @@ class Pipeline(self):
             self.workfile = self.workfile.append(pd.Series(state_plans, index=self.workfile.columns ), ignore_index=True)
     
     def attribute_exclusions():
+        # placeholder for now
+        pass
 
     def clean_attributes(self):
         self.workfile=pd.read_csv('../data/raw_files/Plan_Attributes_PUF.csv',low_memory=False, encoding ='latin1')
         clean_all()
-         
-         if self.fl != True:
+        
+        if self.fl != True:
             #Florida does not have any attribute exclusions. Most states do.
             attribute_exclusions()
 
         # no value for recommender at this time
-        attr=attr.drop(['BusinessYear','SourceName', 'ImportDate',
+        self.workfile=self.workfile.drop(['BusinessYear','SourceName', 'ImportDate',
                 'PlanExpirationDate','PlanEffectiveDate',
                 'URLForEnrollmentPayment', 'FormularyURL','IsGuaranteedRate'], axis=1)
         #These are either 0, N/A, or No for all values in FL
-        attr=attr.drop(['IndianPlanVariationEstimatedAdvancedPaymentAmountPerEnrollee',
+        self.workfile=self.workfile.drop(['IndianPlanVariationEstimatedAdvancedPaymentAmountPerEnrollee',
                 'ChildOnlyPlanId','HSAOrHRAEmployerContribution', 
                 'HSAOrHRAEmployerContributionAmount','PlanLevelExclusions'], axis = 1)
         #These are alterations to default rates.  rate file cannot be used at this time.
 
-        attr=attr.drop(['MEHBInnTier1IndividualMOOP','MEHBInnTier1FamilyPerPersonMOOP',
+        self.workfile=self.workfile.drop(['MEHBInnTier1IndividualMOOP','MEHBInnTier1FamilyPerPersonMOOP',
                 'MEHBInnTier1FamilyPerGroupMOOP','MEHBInnTier2IndividualMOOP',
                 'MEHBInnTier2FamilyPerPersonMOOP','MEHBInnTier2FamilyPerGroupMOOP',
                 'MEHBOutOfNetIndividualMOOP','MEHBOutOfNetFamilyPerPersonMOOP',
@@ -163,7 +160,7 @@ class Pipeline(self):
                 'TEHBDedCombInnOonFamilyPerPerson','TEHBDedCombInnOonFamilyPerGroup'], axis =1)
 
         #Per data dictionary, these are actuarial columns.
-        attr.drop(['MarketCoverage', 'TIN','HIOSProductId', 'HPID', 'FormularyId', 'IsNewPlan',
+        self.workfile.drop(['MarketCoverage', 'TIN','HIOSProductId', 'HPID', 'FormularyId', 'IsNewPlan',
             'DesignType', 'UniquePlanDesign', 'QHPNonQHPTypeId',
             'CompositeRatingOffered', 'EHBPercentTotalPremium',
             'EHBPediatricDentalApportionmentQuantity', 'OutOfCountryCoverage',
@@ -186,21 +183,21 @@ class Pipeline(self):
         self.ld_diab_fx_mon is financial costs of of giving birth
         self.plan_docs is web links
         '''
-        
-        self.fronters=attr[['IssuerId', 'StandardComponentId', 'PlanMarketingName', 'NetworkId',
-       'ServiceAreaId','PlanId']]
+    
+        self.fronters=self.workfile[['IssuerId', 'StandardComponentId', 'PlanMarketingName', 'NetworkId',
+    'ServiceAreaId','PlanId']]
 
-        self.special=attr[['IsNoticeRequiredForPregnancy','IsReferralRequiredForSpecialist','SpecialistRequiringReferral']]
-        attr.drop(['IsNoticeRequiredForPregnancy','IsReferralRequiredForSpecialist','SpecialistRequiringReferral'], axis=1, inplace=True)
+        self.special=self.workfile[['IsNoticeRequiredForPregnancy','IsReferralRequiredForSpecialist','SpecialistRequiringReferral']]
+        self.workfile.drop(['IsNoticeRequiredForPregnancy','IsReferralRequiredForSpecialist','SpecialistRequiringReferral'], axis=1, inplace=True)
 
-        self.ld_diab_fx_mon=attr[['SBCHavingaBabyDeductible',
+        self.ld_diab_fx_mon=self.workfile[['SBCHavingaBabyDeductible',
             'SBCHavingaBabyCopayment', 'SBCHavingaBabyCoinsurance',
             'SBCHavingaBabyLimit', 'SBCHavingDiabetesDeductible',
             'SBCHavingDiabetesCopayment', 'SBCHavingDiabetesCoinsurance',
             'SBCHavingDiabetesLimit', 'SBCHavingSimplefractureDeductible',
             'SBCHavingSimplefractureCopayment',
             'SBCHavingSimplefractureCoinsurance', 'SBCHavingSimplefractureLimit']]
-        attr.drop(['SBCHavingaBabyDeductible',
+        self.workfile.drop(['SBCHavingaBabyDeductible',
             'SBCHavingaBabyCopayment', 'SBCHavingaBabyCoinsurance',
             'SBCHavingaBabyLimit', 'SBCHavingDiabetesDeductible',
             'SBCHavingDiabetesCopayment', 'SBCHavingDiabetesCoinsurance',
@@ -209,14 +206,92 @@ class Pipeline(self):
             'SBCHavingSimplefractureCoinsurance', 'SBCHavingSimplefractureLimit'],axis=1,inplace=True)
 
         self.plan_docs=[['URLForSummaryofBenefitsCoverage','PlanBrochure']]
-        attr.drop(['URLForSummaryofBenefitsCoverage','PlanBrochure'],axis=1,inplace=True)
+        self.workfile.drop(['URLForSummaryofBenefitsCoverage','PlanBrochure'],axis=1,inplace=True)
         '''
         Issuers only have to report if they have a disease management support progam 
         and then in another column list what they are. The blanks are given a 'No' which is 
         later used for 'No management program in hotcoding
         '''
-        attr.fillna('No', inplace=True)
+        self.workfile.fillna('No', inplace=True)
         # duplicate name issue fix
-        attr.replace(['Weight Loss Management Program','High Blood Pressure & High Cholesterol Management Program',],
+        self.workfile.replace(['Weight Loss Management Program','High Blood Pressure & High Cholesterol Management Program',],
         [' Weight Loss Programs',' Blood Pressure-Cholesterol Management Program'],inplace=True)
+        
+        '''
+        A plan can have multiple disase management plans listed in the same column.
+        This code block separates them out,then adds back to the original as 
+        new columns
+        '''
+        self.workfile= = pd.concat([self.workfile['KEYS'], self.workfile['DiseaseManagementProgramsOffered'].str.split(', ', expand=True)], axis=1)
+        self.workfile.drop(['WellnessProgramOffered','DiseaseManagementProgramsOffered'], axis=1, inplace=True)
+        self.workfile.to_csv('../data/clean_files/attr_FL.csv')
+
+
+    def clean_benefits(self):
+        self.workfile=pd.read_csv('../data/raw_files/Benefits_Cost_Sharing_PUF.csv',low_memory=False, encoding ='latin1')
+
+        self.workfile=self.workfile.drop(['BusinessYear','SourceName', 'ImportDate'], axis = 1)
+        self.workfile=self.workfile[self.workfile.StateCode == 'FL'].copy()
+
+        
+        self.workfile.drop(columns=['CopayInnTier1', 'CopayInnTier2', 'CopayOutofNet', 'CoinsInnTier1','CoinsInnTier2', 'CoinsOutofNet', 'IsEHB',
+                        'QuantLimitOnSvc', 'LimitQty', 'LimitUnit', 'Explanation','EHBVarReason', 'IsExclFromInnMOOP', 'IsExclFromOonMOOP'], axis=1, inplace=True)
+
+        dental = ['Basic Dental Care - Child', 'Orthodontia - Child', 'Major Dental Care - Child',
+                'Basic Dental Care - Adult', 'Orthodontia - Adult', 'Major Dental Care - Adult',
+                'Dental Check-Up for Children', 'Routine Dental Services (Adult)', 'Accidental Dental',
+                'Dental Anesthesia','Congenital Anomaly, including Cleft Lip/Palate', 'Dental X-rays',
+                'Topical Flouride', 'Sealants', 'Fillings', 'Recementation of Space Maintainers', 
+                'Removal of Fixed Space Maintainers', 'Restorative Services', 
+                'Periodontal Root Scaling and Planing', 'Periodontal Maintenance', 'Periodontal and Osseous Surgery',
+                'Occlusal Adjustments', 'Root Canal Therapy and Retreatment', 'Periradicular Surgical Procedures',
+                'Partial Pulpotomy', 'Vital Pulpotomy', 'Denture Adjustments',
+                'Initial Placement of Bridges and Dentures', 'Tissue Conditioning', 'Reline and Rebase', 
+                'Post and Core Build-up', 'Extractions', 'Complex Oral Surgery', 'Implants',
+                'Immediate Dentures', 'Anesthesia Services for Dental Care', 'Accidental Dental Adult','Denture Reline and Rebase']
+
+        drugs = ['Off Label Prescription Drugs', 'Generic Drugs', 'Preferred Brand Drugs','Non-Preferred Brand Drugs','Specialty Drugs',
+                'Tier 2 Generic Drugs', 'Preferred Generic Drugs']
+        self.workfile=self.workfile[self.workfile['BenefitName'].isin(dental) == False]
+        make_dummies(self)
+        self.workfile.to_csv('../data/clean_files/ben_FL.csv')
+
+    def clean_network(self):
+        self.workfile=pd.read_csv('../data/raw_files/Network_PUF.csv',low_memory=False, encoding ='latin1')
+        clean_all()
+        self.workfile=self.workfile.drop(['BusinessYear','SourceName', 'ImportDate','NetworkURL'], axis = 1)
+        self.workfile.drop(['StateCode','MarketCoverage'],axis=1, inplace=True)
+        self.workfile=self.workfile[['IssuerId','NetworkId','NetworkName']]
+        temp_area=pd.read_csv('../data/clean_files/area_FL.csv')
+        self.workfile=temp_area.merge(self.workfile, how='left', on='IssuerId')
+        self.workfile.to_csv('../data/clean_files/network_FL.csv')
+
+    def clean_rules():
+        '''
+        Financial  data cannot be linked to benefit plans at this time so 
+        this method is not used
+        '''
+        self.workfile=pd.read_csv('../data/raw_files/Business_Rules_PUF.csv',low_memory=False, encoding ='latin1')
+        clean_all()
+        pass
+    
+    def clean_rates():
+        '''
+        Financial  data cannot be linked to benefit plans at this time so 
+        this method is not used
+        '''
+        self.workfile=pd.read_csv('../data/raw_files/Rate_PUF.csv',low_memory=False, encoding ='latin1')
+        clean_all()
+        pass
+    
+    def rejections():
+
+
+    def make_files(self):
+        clean_area()
+        clean_attributes()
+        clean_benefits()
+        clean_network()
+        clean_rules()
+        clean_rates()
 
