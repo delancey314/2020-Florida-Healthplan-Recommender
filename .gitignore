@@ -3,6 +3,13 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+#personal
+data/raw_files
+all_raw.zip
+
+
+
+
 # C extensions
 *.so
 
