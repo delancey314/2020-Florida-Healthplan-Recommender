@@ -20,9 +20,6 @@ class Pipeline(self):
 
     
 
-
-
-
     def clean_all(self):
         #sets all files to Florida only
         if  self.fl:
@@ -222,7 +219,8 @@ class Pipeline(self):
         This code block separates them out,then adds back to the original as 
         new columns
         '''
-        self.workfile= = pd.concat([self.workfile['KEYS'], self.workfile['DiseaseManagementProgramsOffered'].str.split(', ', expand=True)], axis=1)
+        split_management=self.workfile['DiseaseManagementProgramsOffered'].str.split(', ', expand=True)
+        self.workfile= pd.concat(self.workfile,split_management, axis=1)
         self.workfile.drop(['WellnessProgramOffered','DiseaseManagementProgramsOffered'], axis=1, inplace=True)
         self.workfile.to_csv('../data/clean_files/attr_FL.csv')
 
@@ -233,7 +231,7 @@ class Pipeline(self):
         self.workfile=self.workfile.drop(['BusinessYear','SourceName', 'ImportDate'], axis = 1)
         self.workfile=self.workfile[self.workfile.StateCode == 'FL'].copy()
 
-        
+        #finance columns
         self.workfile.drop(columns=['CopayInnTier1', 'CopayInnTier2', 'CopayOutofNet', 'CoinsInnTier1','CoinsInnTier2', 'CoinsOutofNet', 'IsEHB',
                         'QuantLimitOnSvc', 'LimitQty', 'LimitUnit', 'Explanation','EHBVarReason', 'IsExclFromInnMOOP', 'IsExclFromOonMOOP'], axis=1, inplace=True)
 
@@ -252,7 +250,12 @@ class Pipeline(self):
 
         drugs = ['Off Label Prescription Drugs', 'Generic Drugs', 'Preferred Brand Drugs','Non-Preferred Brand Drugs','Specialty Drugs',
                 'Tier 2 Generic Drugs', 'Preferred Generic Drugs']
+        '''
+        Dental has been dropped so dental benefits is also being dropped. 
+        Pharmacy is out of scope as well
+        '''
         self.workfile=self.workfile[self.workfile['BenefitName'].isin(dental) == False]
+        self.workfile=self.workfile[self.workfile['BenefitName'].isin(drugs) == False]
         make_dummies(self)
         self.workfile.to_csv('../data/clean_files/ben_FL.csv')
 
@@ -266,7 +269,7 @@ class Pipeline(self):
         self.workfile=temp_area.merge(self.workfile, how='left', on='IssuerId')
         self.workfile.to_csv('../data/clean_files/network_FL.csv')
 
-    def clean_rules():
+    def clean_rules(self):
         '''
         Financial  data cannot be linked to benefit plans at this time so 
         this method is not used
@@ -275,7 +278,7 @@ class Pipeline(self):
         clean_all()
         pass
     
-    def clean_rates():
+    def clean_rates(self):
         '''
         Financial  data cannot be linked to benefit plans at this time so 
         this method is not used
@@ -283,8 +286,6 @@ class Pipeline(self):
         self.workfile=pd.read_csv('../data/raw_files/Rate_PUF.csv',low_memory=False, encoding ='latin1')
         clean_all()
         pass
-    
-    def rejections():
 
 
     def make_files(self):
