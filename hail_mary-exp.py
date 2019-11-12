@@ -166,7 +166,7 @@ def index():
 # Get's the customer's desired benefits.
 @app.route('/conditions', methods=['GET', 'POST'])
 def conditions():
-    return render_template('conditions_experiment.html')
+    return render_template('conditions_experiment-work.html')
 
 # takes the customer's input, does the jaccard, then returns the results.
 @app.route('/analysis', methods=['GET', 'POST'])
