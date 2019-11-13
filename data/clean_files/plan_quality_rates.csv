@@ -1,18 +1,18 @@
-,IssuerId,Issuer_Denial_rate,Issuer_Disenroll,Global_rate
-0,99787,100.4,79.7,
-1,48121,33.6,Disenrollment not Provided,
-2,17121,46.2,51.8,
-3,59667,51.9,78.2,
-4,15980,42.8,Disenrollment not Provided,
-5,48129,36.3,Disenrollment not Provided,
-6,30115,29.8,54.9,
-7,43274,49.1,70.3,
-8,15833,39.6,30.3,
-9,56503,6.3,13.1,3.0
-11,30252,0.5,10.5,3.0
-12,16842,0.7,11.6,4.0
-13,36194,16.1,13.7,4.0
-14,54172,24.5,50.3,2.0
-15,21663,23.9,9.8,3.0
-16,12379,New Plan,New Plan,
-17,40572,New Plan,New Plan,
+,IssuerId,Insurance Plan,Percent Claims Rejected 2019,Percent No longer on plan Oct 1,‘Customer 2019 Plan Rating(1-5)
+16,12379,Bright Health Network,New Plan,New Plan,New Plan
+8,15833,DentalGuard Preferred,39.6%,30.3%,Approval rate not Provided
+4,15980,HumanaDental PPO/Traditional Preferred,42.8%,Disenrollment not Provided,Approval rate not Provided
+12,16842,NetworkBlue,0.7%,11.6%,4
+2,17121,BEST Life and Health National Network,46.2%,51.8%,Approval rate not Provided
+15,21663,Ambetter from Sunshine Health Network,23.9%,9.8%,3
+6,30115,Blue Dental Choice PPO,29.8%,54.9%,Approval rate not Provided
+11,30252,BlueCare,0.5%,10.5%,3
+13,36194,AdventHealth,16.1%,13.7%,4
+17,40572,Florida EPO,New Plan,New Plan,New Plan
+7,43274,EssentialSmile,49.1%,70.3%,Approval rate not Provided
+1,48121,Florida Connect,33.6%,Disenrollment not Provided,Approval rate not Provided
+5,48129,Renaissance Dental,36.3%,Disenrollment not Provided,Approval rate not Provided
+14,54172,Molina Marketplace,24.5%,50.3%,2
+9,56503,FHCP HMO Network,6.3%,13.1%,3
+3,59667,"DentaQuest of Florida, Inc",51.9%,78.2%,Approval rate not Provided
+0,99787,Dentegra PPO,100.4%,79.7%,Approval rate not Provided

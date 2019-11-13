@@ -1,6 +1,6 @@
 # move this to '../app/app' before running - templates, etc  are there
 
-from flask import Flask, request, render_template
+from flask import Flask, request, render_template, session, redirect
 import pandas as pd
 import numpy as np
 import sys
@@ -174,21 +174,22 @@ def conditions():
 # takes the customer's input, does the jaccard, then returns the results.
 @app.route('/analysis', methods=['GET', 'POST'])
 def analysis():
-        if request.method == 'POST':
-            listx = request.form.getlist('mycheckbox')
-            results=new_pipeline(listx)
-            print(results)
+    if request.method == 'POST':
+        listx = request.form.getlist('mycheckbox')
+        results=new_pipeline(listx)
+        print(results)
 
-        return 'Done'
-    #return render_template('results.html')
+    #return 'Done'
+    return render_template('results.html',tables=[results.to_html(classes='data')], titles=results.columns.values)
 
 '''
 This page is used for determining rates and costs. Since the rate cannot be
 mapped back to the benefits plans at this time, it is commented out
-'''
+
 @app.route('/demography',methods=['GET', 'POST'])
 def demography():
     return render_template('landing.html')
+'''
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8105, threaded=True, debug=True)
