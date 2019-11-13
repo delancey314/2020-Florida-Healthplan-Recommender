@@ -141,15 +141,20 @@ def add_quality(plan_list):
     final_merge.drop(['Unnamed: 0','IssuerId'], axis=1,inplace=True)
     return final_merge
 
-def new_pipeline(listx):
+def new_pipeline(listx,zip=33101):
     '''
     all actions to take customer input in and return the best plans.
     '''
     # test data
-    # zip =33101
-    # example=['infus','gene','pict','lab','xray','glass_a','glass_c','eye_a','eye_c','dme','g_tube','hab','home','hosp','pain','osteo','osteo',
-    #         'prosth','skill_rn','er','ambu','hosp','inpt','all_inj','all_test','breath','prevent','transplant',
-    #         'l_d','nutr']
+    #zip =33101
+    example=['bone','chemo','rad','cpr','hrtman','bpcho','diab_care',
+                  'diab_edu','dialysis','infus','gene','pict','lab','xray','glass_a','glass_c',
+                  'eye_a','eye_c','dme','g_tube','hab','home','hospice','pain','osteo',
+                  'prosth','skill_rn','er','ambu','hosp','inpt','all_inj','all_test','breath',
+                  'prevent','transplant','l_d','nutr','preg_m','prenat','well_b','depr','ment_off',
+                  'ment_in','ment_out','not_doc','out_surg','out_ambu','pcp','foot','spec','tele','urgent',
+                  'back','observ','rehab_out','reconst','pt_rehab','speech','drug_in','drug_out',
+                  'drug_off','chiro','fit','gym','o2','nutr_counc','tmj','kg_m']
 
     plans=find_plans_for_area(zip)
     new_user=make_user(short_names)
@@ -166,14 +171,16 @@ def index():
 # Get's the customer's desired benefits.
 @app.route('/conditions', methods=['GET', 'POST'])
 def conditions():
-    return render_template('conditions_experiment-work.html')
+    return render_template('conditions_experiment.html')
 
 # takes the customer's input, does the jaccard, then returns the results.
 @app.route('/analysis', methods=['GET', 'POST'])
 def analysis():
     if request.method == 'POST':
+        zip= request.form['zip']
+        zip = int(zip)
         listx = request.form.getlist('mycheckbox')
-        results=new_pipeline(listx)
+        results=new_pipeline(listx,zip)
         print(results)
 
     #return 'Done'
@@ -190,3 +197,5 @@ def demography():
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', port=8105, threaded=True, debug=True)
+
+  
