@@ -125,6 +125,7 @@ def jiccard_similarity(customer_record,plans):
     jaccard_similarity=jaccard_similarity.sort_values('jaccard_score',ascending = False)
     jaccard_similarity=jaccard_similarity.iloc[1:]
     best_to_worst=jaccard_similarity[['IssuerId','jaccard_score']]
+   
     
     
     return best_to_worst
@@ -136,7 +137,10 @@ def add_quality(plan_list):
     '''
     
     quality=pd.read_csv('../data/clean_files/plan_quality_rates.csv')
+   
     final_merge = plan_list.merge(quality,how='left',on='IssuerId')
+
+   
     final_merge.drop(['Unnamed: 0'], axis=1,inplace=True)
     return final_merge
 
@@ -155,6 +159,7 @@ def new_pipeline(listx):
     customer_record = make_customer_row(new_user,example)
     top_plans=jiccard_similarity(customer_record,plans)
     plans_rated=add_quality(top_plans)
+    return plans_rated
 
 # first landing page
 @app.route('/', methods=['GET', 'POST'])
@@ -172,7 +177,7 @@ def analysis():
         if request.method == 'POST':
             listx = request.form.getlist('mycheckbox')
             results=new_pipeline(listx)
-            print(type(results))
+            print(results)
 
         return 'Done'
     #return render_template('results.html')
